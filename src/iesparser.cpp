@@ -22,7 +22,7 @@ void IESParser::Parse(std::istream& input_stream)
     }
     else
     {
-        format = Format::LM631986;
+        format = Format::LM_63_1986;
     }
 
     // Parse block before TILT and TILT line.
@@ -35,12 +35,13 @@ void IESParser::Parse(std::istream& input_stream)
         }
         else if (IsTiltLine(line))
         {
+            CheckRequiredKeywords();
             tilt_reached = true;
             ParseTiltLine(line);
         }
         else
         {
-            if (format != Format::LM631986)
+            if (format != Format::LM_63_1986)
             {
                 throw ParsingException("Expected keyword line or TILT line", line_counter);
             }
@@ -156,15 +157,15 @@ void IESParser::ParseFormatVersion(const std::string& version_string)
 {
     if (version_string == "IESNA91")
     {
-        format = LM631991;
+        format = LM_63_1991;
     }
     else if (version_string == "IESNA:LM-63-1995")
     {
-        format = LM631995;
+        format = LM_63_1995;
     }
     else if (version_string == "IESNA:LM-63-2002")
     {
-        format = LM632002;
+        format = LM_63_2002;
     }
     else
     {
@@ -281,7 +282,7 @@ void IESParser::AcceptKeyword(const std::string& keyword)
 
     switch (format)
     {
-    case Format::LM632002:
+    case Format::LM_63_2002:
         if (!(keyword[0] == '_' || KeywordAllowedByIesna02(keyword)))
         {
             throw ParsingException(
@@ -289,7 +290,7 @@ void IESParser::AcceptKeyword(const std::string& keyword)
                 line_counter);
         }
         break;
-    case Format::LM631995:
+    case Format::LM_63_1995:
         if (!(keyword[0] == '_' || KeywordAllowedByIesna95(keyword)))
         {
             throw ParsingException(
@@ -297,7 +298,7 @@ void IESParser::AcceptKeyword(const std::string& keyword)
                 line_counter);
         }
         break;
-    case Format::LM631991:
+    case Format::LM_63_1991:
         if (keyword[0] == '_')
         {
             throw ParsingException(
@@ -311,6 +312,69 @@ void IESParser::AcceptKeyword(const std::string& keyword)
                 line_counter);
         }
         break;
+    }
+}
+
+
+void IESParser::CheckRequiredKeywords()
+{
+    assert(format != Format::UNKNOWN);
+
+    switch (format)
+    {
+    case Format::LM_63_2002:
+        CheckIesna02RequiredKeywords();
+        break;
+    case Format::LM_63_1995:
+        // There are now required keywords in 95 standard
+        break;
+    case Format::LM_63_1991:
+        CheckIesna91RequiredKeywords();
+        break;
+    }
+}
+
+
+void IESParser::CheckIesna02RequiredKeywords()
+{
+    const int REQUIRED_KEYWORDS_COUNT = 4;
+    const char* REQUIRED_KEYWORDS[REQUIRED_KEYWORDS_COUNT] =
+    {
+        "TEST",
+        "TESTLAB",
+        "ISSUEDATE",
+        "MANUFAC"
+    };
+    for (auto&& required_keyword : REQUIRED_KEYWORDS)
+    {
+        if (keywords_dictionary.count(required_keyword) == 0)
+        {
+            throw ParsingException(
+                std::string("Keyword ") + required_keyword +
+                ", required by IESNA LM-63-2002 standard, was not found",
+                line_counter);
+        }
+    }
+}
+
+
+void IESParser::CheckIesna91RequiredKeywords()
+{
+    const int REQUIRED_KEYWORDS_COUNT = 2;
+    const char* REQUIRED_KEYWORDS[REQUIRED_KEYWORDS_COUNT] =
+    {
+        "TEST",
+        "MANUFAC"
+    };
+    for (auto&& required_keyword : REQUIRED_KEYWORDS)
+    {
+        if (keywords_dictionary.count(required_keyword) == 0)
+        {
+            throw ParsingException(
+                std::string("Keyword ") + required_keyword +
+                ", required by IESNA LM-63-91 standard, was not found",
+                line_counter);
+        }
     }
 }
 

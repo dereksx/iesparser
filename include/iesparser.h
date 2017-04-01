@@ -71,10 +71,10 @@ class IESParser
     enum Format
     {
         UNKNOWN,
-        LM631986,
-        LM631991,
-        LM631995,
-        LM632002,
+        LM_63_1986,
+        LM_63_1991,
+        LM_63_1995,
+        LM_63_2002,
     };
 
     enum TiltSpecification
@@ -88,13 +88,13 @@ class IESParser
     void Parse(std::istream& input_stream);
 
     // Check if the keyword is allowed by IESNA LM-63-2002 standard.
-    bool KeywordAllowedByIesna02(const std::string& keyword);
+    static bool KeywordAllowedByIesna02(const std::string& keyword);
 
     // Check if the keyword is allowed by IESNA LM-63-95 standard.
-    bool KeywordAllowedByIesna95(const std::string& keyword);
+    static bool KeywordAllowedByIesna95(const std::string& keyword);
 
     // Check if the keyword is allowed by IESNA LM-63-91 standard.
-    bool KeywordAllowedByIesna91(const std::string& keyword);
+    static bool KeywordAllowedByIesna91(const std::string& keyword);
 
     // Options:
     bool restrict_keyword_length = false;
@@ -104,9 +104,10 @@ class IESParser
     bool ignore_empty_lines = true;
 
 private:
-    const char* KEYWORD_LINE_REGEX = "(.*)[:space:]+(\[\w*\])";
-    const char* TILT_LINE_REGEX = "TILT[:space:]*=[:space:]*(.*)";
-    const int MAX_KEYWORD_LENGTH = 18;
+    const char* const KEYWORD_LINE_REGEX = "(.*)[:space:]+(\[\w*\])";
+    const char* const TILT_LINE_REGEX = "TILT[:space:]*=[:space:]*(.*)";
+
+    static const int MAX_KEYWORD_LENGTH = 18;
 
     // Read line and increase counter.
     std::string ReadLine(std::istream& input_stream) const;
@@ -133,6 +134,13 @@ private:
 
     // Check if the specified standard allows this keyword.
     void AcceptKeyword(const std::string& keyword);
+
+    // Check if all required keywords were found.
+    void CheckRequiredKeywords();
+
+    void CheckIesna02RequiredKeywords();
+
+    void CheckIesna91RequiredKeywords();
 
     // Check if line is not empty and EOF is not reached.
     void CheckEmpty(std::istream& input_stream, const std::string& line);
