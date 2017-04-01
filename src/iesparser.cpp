@@ -11,7 +11,7 @@ void IESParser::Parse(std::istream& input_stream)
     last_added_keyword = keywords_dictionary.end();
     std::string line;
 
-    // Parse version
+    // Parse version.
     line = ReadTrimmedLine(input_stream);
     CheckEmpty(input_stream, line);
     ParseFormatVersion(line);
@@ -25,7 +25,7 @@ void IESParser::Parse(std::istream& input_stream)
         format = Format::LM631986;
     }
 
-    // Parse block before TILT and TILT line
+    // Parse block before TILT and TILT line.
     bool tilt_reached = false;
     while (!tilt_reached)
     {
@@ -199,11 +199,11 @@ void IESParser::ParseKeywordLine(const std::string& line)
     std::string key = what[1];
     std::string value = what[2];
 
-    // Check if the specified standard allows this keyword
+    // Check if the specified standard allows this keyword.
     if (!ignore_allowed_keywords) AcceptKeyword(key);
 
-    // Process MORE, BLOCK and ENDBLOCK keywords separately
-    // For all other keywords - just add them to dictionary
+    // Process MORE, BLOCK and ENDBLOCK keywords separately.
+    // For all other keywords - just add them to dictionary.
     ProcessBlockKeywords(key);
     if (key == "MORE")
     {

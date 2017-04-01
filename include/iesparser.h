@@ -84,19 +84,19 @@ class IESParser
         NONE
     };
 
-    // Parse input stream containing IESNA LM-63 Photometric Data
+    // Parse input stream containing IESNA LM-63 Photometric Data.
     void Parse(std::istream& input_stream);
 
-    // Check if the keyword is allowed by IESNA LM-63-2002 standard 
+    // Check if the keyword is allowed by IESNA LM-63-2002 standard.
     bool KeywordAllowedByIesna02(const std::string& keyword);
 
-    // Check if the keyword is allowed by IESNA LM-63-95 standard 
+    // Check if the keyword is allowed by IESNA LM-63-95 standard.
     bool KeywordAllowedByIesna95(const std::string& keyword);
 
-    // Check if the keyword is allowed by IESNA LM-63-91 standard 
+    // Check if the keyword is allowed by IESNA LM-63-91 standard.
     bool KeywordAllowedByIesna91(const std::string& keyword);
 
-    // Options
+    // Options:
     bool restrict_keyword_length = false;
     bool ignore_allowed_keywords = false;
     bool ignore_required_keywords = false;
@@ -112,8 +112,8 @@ private:
     std::string ReadLine(std::istream& input_stream) const;
 
     // Read line, trim it and increase counter.
-    // When ignore_empty_lines set to true,
-    // this method ignores all lines consisting of whitespace characters.
+    // When ignore_empty_lines set to true this method
+    // ignores all lines consisting of whitespace characters.
     std::string ReadTrimmedLine(std::istream& input_stream) const;
 
     // Retrieve format version.
@@ -128,13 +128,13 @@ private:
 
     void ParseTiltLine(const std::string& line);
 
-    // Process BLOCK and ENDBLOCK keywords
+    // Process BLOCK and ENDBLOCK keywords.
     void ProcessBlockKeywords(const std::string& keyword);
 
-    // Check if the specified standard allows this keyword
+    // Check if the specified standard allows this keyword.
     void AcceptKeyword(const std::string& keyword);
 
-    // Check if line is not empty and EOF is not reached
+    // Check if line is not empty and EOF is not reached.
     void CheckEmpty(std::istream& input_stream, const std::string& line);
 
     Format format;
